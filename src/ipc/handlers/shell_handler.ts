@@ -1,4 +1,4 @@
-import { shell } from "electron";
+import { shell } from "../platform";
 import log from "electron-log";
 import { createLoggedHandler } from "./safe_handle";
 

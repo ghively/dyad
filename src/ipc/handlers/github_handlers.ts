@@ -1,4 +1,5 @@
-import { BrowserWindow, IpcMainInvokeEvent } from "electron";
+import { BrowserWindow } from "../platform";
+import type { IpcMainInvokeEvent } from "electron";
 import fetch from "node-fetch"; // Use node-fetch for making HTTP requests in main process
 import { writeSettings, readSettings } from "../../main/settings";
 import {

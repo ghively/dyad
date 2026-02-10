@@ -1,4 +1,4 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow } from "../platform";
 import log from "electron-log";
 import { platform } from "os";
 import { createTypedHandler } from "./base";

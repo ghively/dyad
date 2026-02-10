@@ -8,7 +8,10 @@ import { IS_TEST_BUILD } from "../ipc/utils/test_utils";
 export function getDyadAppsBaseDirectory(): string {
   if (IS_TEST_BUILD) {
     const electron = getElectron();
-    return path.join(electron!.app.getPath("userData"), "dyad-apps");
+    if (electron) {
+      return path.join(electron.app.getPath("userData"), "dyad-apps");
+    }
+    return path.join(path.resolve("./userData"), "dyad-apps");
   }
   return path.join(os.homedir(), "dyad-apps");
 }
@@ -24,7 +27,10 @@ export function getDyadAppPath(appPath: string): string {
 
 export function getTypeScriptCachePath(): string {
   const electron = getElectron();
-  return path.join(electron!.app.getPath("sessionData"), "typescript-cache");
+  if (electron) {
+    return path.join(electron.app.getPath("sessionData"), "typescript-cache");
+  }
+  return path.join(path.resolve("./userData/session"), "typescript-cache");
 }
 
 /**

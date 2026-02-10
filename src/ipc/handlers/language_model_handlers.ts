@@ -7,19 +7,12 @@ import type {
 import { createLoggedHandler } from "./safe_handle";
 import log from "electron-log";
 import {
-  CUSTOM_PROVIDER_PREFIX,
-  getLanguageModelProviders,
-  getLanguageModels,
-  getLanguageModelsByProviders,
-} from "../shared/language_model_helpers";
+  CUSTOM_PROVIDER_PREFIX, getLanguageModelProviders, getLanguageModels, getLanguageModelsByProviders, } from "../shared/language_model_helpers";
 import { db } from "@/db";
 import {
-  language_models,
-  language_model_providers as languageModelProvidersSchema,
-  language_models as languageModelsSchema,
-} from "@/db/schema";
+  language_models, language_model_providers as languageModelProvidersSchema, language_models as languageModelsSchema, } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
-import { IpcMainInvokeEvent } from "electron";
+import type { IpcMainInvokeEvent } from "electron";
 
 const logger = log.scope("language_model_handlers");
 const handle = createLoggedHandler(logger);

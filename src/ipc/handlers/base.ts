@@ -1,4 +1,5 @@
-import { ipcMain, IpcMainInvokeEvent } from "electron";
+import { ipcMain } from "../platform";
+import type { IpcMainInvokeEvent } from "electron";
 import { z } from "zod";
 import type { IpcContract } from "../contracts/core";
 

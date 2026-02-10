@@ -1,4 +1,5 @@
-import { ipcMain, IpcMainInvokeEvent } from "electron";
+import { ipcMain } from "../platform";
+import type { IpcMainInvokeEvent } from "electron";
 import log from "electron-log";
 import { IS_TEST_BUILD } from "../utils/test_utils";
 

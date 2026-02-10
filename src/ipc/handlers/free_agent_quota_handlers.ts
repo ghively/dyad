@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { createTypedHandler } from "./base";
 import { freeAgentQuotaContracts } from "../types/free_agent_quota";
 import log from "electron-log";
-import { ipcMain } from "electron";
+import { ipcMain } from "../platform";
 import { IS_TEST_BUILD } from "../utils/test_utils";
 import fetch from "node-fetch";
 

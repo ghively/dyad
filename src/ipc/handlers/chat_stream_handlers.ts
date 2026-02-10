@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
-import { ipcMain, IpcMainInvokeEvent } from "electron";
+import { ipcMain } from "../platform";
+import type { IpcMainInvokeEvent } from "electron";
 import { createTypedHandler } from "./base";
 import { chatContracts } from "../types/chat";
 import {

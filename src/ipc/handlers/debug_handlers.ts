@@ -1,4 +1,4 @@
-import { BrowserWindow, clipboard } from "electron";
+import { BrowserWindow, clipboard } from "../platform";
 import { platform, arch } from "os";
 import { readSettings } from "../../main/settings";
 import { createTypedHandler } from "./base";
