@@ -49,14 +49,14 @@ setBroadcaster(broadcast);
 server.register(async (fastify) => {
   fastify.get('/ws', { websocket: true }, (connection, req) => {
     console.log('Client connected');
-    clients.add(connection.socket);
+    clients.add(connection);
 
-    connection.socket.on('close', () => {
+    connection.on('close', () => {
         console.log('Client disconnected');
-        clients.delete(connection.socket);
+        clients.delete(connection);
     });
 
-    connection.socket.on('message', (message) => {
+    connection.on('message', (message: unknown) => {
         // Echo or handle
     });
   });

@@ -1,5 +1,5 @@
 import { BrowserWindow } from "../platform";
-import type { IpcMainInvokeEvent } from "electron";
+import type { BrowserWindow as BrowserWindowType, IpcMainInvokeEvent } from "electron";
 import fetch from "node-fetch"; // Use node-fetch for making HTTP requests in main process
 import { writeSettings, readSettings } from "../../main/settings";
 import {
@@ -81,7 +81,7 @@ interface DeviceFlowState {
   interval: number;
   timeoutId: NodeJS.Timeout | null;
   isPolling: boolean;
-  window: BrowserWindow | null; // Reference to the window that initiated the flow
+  window: BrowserWindowType | null; // Reference to the window that initiated the flow
 }
 
 // Simple map to track ongoing flows (key could be appId or a unique flow ID if needed)
