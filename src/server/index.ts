@@ -93,8 +93,8 @@ server.post('/api/ipc/:channel', async (request, reply) => {
 });
 
 // Serve frontend build if exists
-// Assuming vite build outputs to .vite/renderer/main_window/index.html
-const frontendPath = path.resolve(__dirname, '../../.vite/renderer/main_window');
+// Assuming vite build outputs to out/renderer/main_window/index.html
+const frontendPath = path.resolve(__dirname, '../../out/renderer/main_window');
 if (fs.existsSync(frontendPath)) {
     console.log('Serving frontend from:', frontendPath);
     server.register(fastifyStatic, {
@@ -114,8 +114,17 @@ if (fs.existsSync(frontendPath)) {
 
 const start = async () => {
     try {
-        await server.listen({ port: 3000, host: '0.0.0.0' });
-        console.log('Server listening on http://localhost:3000');
+        const address = await server.listen({ port: 3000, host: '0.0.0.0' });
+        console.log(`Server listening on ${address}`);
+
+        // Log all registered routes
+        console.log(server.printRoutes());
+
+        // Keep process alive check
+        setInterval(() => {
+            console.log('Server heartbeat: process active');
+        }, 5000);
+
     } catch (err) {
         server.log.error(err);
         process.exit(1);
