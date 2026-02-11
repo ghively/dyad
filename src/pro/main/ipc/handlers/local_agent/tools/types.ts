@@ -2,7 +2,7 @@
  * Shared types and utilities for Local Agent tools
  */
 
-import { z } from "zod";
+import type { z } from "zod";
 import { IpcMainInvokeEvent } from "electron";
 import { jsonrepair } from "jsonrepair";
 import { AgentToolConsent } from "@/lib/schemas";

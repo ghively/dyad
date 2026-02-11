@@ -1,4 +1,4 @@
-import { IpcMainInvokeEvent } from "electron";
+import type { IpcMainInvokeEvent } from "electron";
 import { readSettings } from "../../main/settings";
 import {
   gitMergeAbort,

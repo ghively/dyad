@@ -1,4 +1,4 @@
-import { dialog, ipcMain } from "electron";
+import { dialog, ipcMain } from "../platform";
 import { execSync } from "child_process";
 import { platform, arch } from "os";
 import fixPath from "fix-path";

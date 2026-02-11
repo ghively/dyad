@@ -1,4 +1,4 @@
-import { dialog } from "electron";
+import { dialog } from "../platform";
 import fs from "fs/promises";
 import path from "path";
 import { createLoggedHandler } from "./safe_handle";

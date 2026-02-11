@@ -1,4 +1,4 @@
-import { ipcMain } from "electron";
+import { ipcMain } from "../../../../ipc/platform";
 import fs from "node:fs";
 import { promises as fsPromises } from "node:fs";
 import path from "path";

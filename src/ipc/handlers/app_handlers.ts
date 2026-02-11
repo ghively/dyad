@@ -1,4 +1,4 @@
-import { ipcMain, app, dialog } from "electron";
+import { ipcMain, app, dialog } from "../platform";
 import { db, getDatabasePath } from "../../db";
 import { apps, chats, messages } from "../../db/schema";
 import { desc, eq, like } from "drizzle-orm";

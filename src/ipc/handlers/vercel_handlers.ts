@@ -1,4 +1,4 @@
-import { IpcMainInvokeEvent } from "electron";
+import type { IpcMainInvokeEvent } from "electron";
 import { Vercel } from "@vercel/sdk";
 import { writeSettings, readSettings } from "../../main/settings";
 import * as schema from "../../db/schema";

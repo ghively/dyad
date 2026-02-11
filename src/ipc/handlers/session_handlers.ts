@@ -1,4 +1,4 @@
-import { session } from "electron";
+import { session } from "../platform";
 import fs from "node:fs/promises";
 import { getTypeScriptCachePath } from "@/paths/paths";
 import { createTypedHandler } from "./base";
