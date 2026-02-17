@@ -1,50 +1,41 @@
 const locks = new Map<number | string, Promise<void>>();
 
 /**
- * Acquires a lock for an app operation
- * @param lockId The app ID to lock
- * @returns An object with release function and promise
- */
-export function acquireLock(lockId: number | string): {
-  release: () => void;
-  promise: Promise<void>;
-} {
-  let release: () => void = () => {};
-
-  const promise = new Promise<void>((resolve) => {
-    release = () => {
-      locks.delete(lockId);
-      resolve();
-    };
-  });
-
-  locks.set(lockId, promise);
-  return { release, promise };
-}
-
-/**
- * Executes a function with a lock on the lock ID
+ * Executes a function with a lock on the lock ID.
+ * Ensures that operations for the same lock ID are executed sequentially.
+ * If an operation fails, the lock is released for subsequent operations.
+ *
  * @param lockId The lock ID to lock
  * @param fn The function to execute with the lock
  * @returns Result of the function
  */
-export async function withLock<T>(
+export function withLock<T>(
   lockId: number | string,
   fn: () => Promise<T>,
 ): Promise<T> {
-  // Wait for any existing operation to complete
-  const existingLock = locks.get(lockId);
-  if (existingLock) {
-    await existingLock;
-  }
+  // Get the promise currently at the end of the chain
+  const previousLock = locks.get(lockId) || Promise.resolve();
 
-  // Acquire a new lock
-  const { release } = acquireLock(lockId);
+  // Chain the new operation onto the existing promise
+  const nextLock = previousLock.then(async () => {
+    return await fn();
+  });
 
-  try {
-    const result = await fn();
-    return result;
-  } finally {
-    release();
-  }
+  // Create a "safe" promise that resolves regardless of success or failure
+  // This ensures the chain continues even if an operation fails
+  const safeNextLock = nextLock.catch(() => {});
+
+  // Update the map to point to the new end of the chain
+  locks.set(lockId, safeNextLock);
+
+  // Clean up when the operation completes (success or failure)
+  // If no new locks have been added, remove the entry from the map to prevent memory leaks
+  safeNextLock.then(() => {
+    if (locks.get(lockId) === safeNextLock) {
+      locks.delete(lockId);
+    }
+  });
+
+  // Return the promise that reflects the actual result of the operation
+  return nextLock;
 }
