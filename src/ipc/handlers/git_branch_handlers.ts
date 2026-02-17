@@ -148,35 +148,36 @@ async function handleSwitchBranch(
   // Check for uncommitted changes
   await withLock(appId, async () => {
     await ensureCleanWorkspace(appPath, `switching to branch '${branch}'`);
-  });
-  try {
-    await gitCheckout({
-      path: appPath,
-      ref: branch,
-    });
-  } catch (checkoutError: any) {
-    const errorMessage = checkoutError?.message || "Failed to switch branch.";
-    // Check if error is about uncommitted changes (fallback in case check above missed it)
-    const lowerMessage = errorMessage.toLowerCase();
-    if (
-      lowerMessage.includes("local changes") ||
-      lowerMessage.includes("would be overwritten") ||
-      lowerMessage.includes("please commit or stash")
-    ) {
-      throw new Error(
-        `Failed to switch branch: uncommitted changes detected. ` +
-          "Please commit or stash your changes manually and try again.",
-      );
-    }
-    throw checkoutError;
-  }
 
-  // Update DB with new branch
-  await updateAppGithubRepo({
-    appId,
-    org: app.githubOrg || undefined,
-    repo: app.githubRepo || "",
-    branch,
+    try {
+      await gitCheckout({
+        path: appPath,
+        ref: branch,
+      });
+    } catch (checkoutError: any) {
+      const errorMessage = checkoutError?.message || "Failed to switch branch.";
+      // Check if error is about uncommitted changes (fallback in case check above missed it)
+      const lowerMessage = errorMessage.toLowerCase();
+      if (
+        lowerMessage.includes("local changes") ||
+        lowerMessage.includes("would be overwritten") ||
+        lowerMessage.includes("please commit or stash")
+      ) {
+        throw new Error(
+          `Failed to switch branch: uncommitted changes detected. ` +
+            "Please commit or stash your changes manually and try again.",
+        );
+      }
+      throw checkoutError;
+    }
+
+    // Update DB with new branch
+    await updateAppGithubRepo({
+      appId,
+      org: app.githubOrg || undefined,
+      repo: app.githubRepo || "",
+      branch,
+    });
   });
 }
 
@@ -248,35 +249,36 @@ async function handleMergeBranch(
   // Check for uncommitted changes
   await withLock(appId, async () => {
     await ensureCleanWorkspace(appPath, `merging branch '${branch}'`);
+
+    try {
+      await gitMerge({
+        path: appPath,
+        branch: mergeBranchRef,
+      });
+    } catch (mergeError: any) {
+      // Convert to MergeConflictError for component compatibility
+      if (mergeError?.name === "GitConflictError") {
+        throw new MergeConflictError(mergeError.message);
+      }
+
+      // Fallback: Check if error is about uncommitted changes
+      const errorMessage = mergeError?.message || "Failed to merge branch.";
+      const lowerMessage = errorMessage.toLowerCase();
+      if (
+        lowerMessage.includes("local changes") ||
+        lowerMessage.includes("would be overwritten") ||
+        lowerMessage.includes("please commit or stash")
+      ) {
+        throw new Error(
+          `Failed to merge branch: uncommitted changes detected. ` +
+            "Please commit or stash your changes manually and try again.",
+        );
+      }
+
+      // Otherwise, throw the original error
+      throw mergeError;
+    }
   });
-  try {
-    await gitMerge({
-      path: appPath,
-      branch: mergeBranchRef,
-    });
-  } catch (mergeError: any) {
-    // Convert to MergeConflictError for component compatibility
-    if (mergeError?.name === "GitConflictError") {
-      throw new MergeConflictError(mergeError.message);
-    }
-
-    // Fallback: Check if error is about uncommitted changes
-    const errorMessage = mergeError?.message || "Failed to merge branch.";
-    const lowerMessage = errorMessage.toLowerCase();
-    if (
-      lowerMessage.includes("local changes") ||
-      lowerMessage.includes("would be overwritten") ||
-      lowerMessage.includes("please commit or stash")
-    ) {
-      throw new Error(
-        `Failed to merge branch: uncommitted changes detected. ` +
-          "Please commit or stash your changes manually and try again.",
-      );
-    }
-
-    // Otherwise, throw the original error
-    throw mergeError;
-  }
 }
 
 async function handleListLocalBranches(
@@ -381,12 +383,12 @@ async function handlePullFromGithub(
       (pullError?.code === "NotFoundError" &&
         (errorMessage.includes("remote ref") ||
           errorMessage.includes("remote branch"))) ||
-      errorMessage.includes("couldn't find remote ref") ||
-      errorMessage.includes("Cannot read properties of null");
+      errorMessage.includes("couldn't find remote ref");
 
     // If the remote branch doesn't exist yet, we can ignore this
     // (e.g., user hasn't pushed the branch yet)
     if (!isMissingRemoteBranch) {
+      logger.error("[GitHub Handler] Pull failed:", pullError);
       throw pullError;
     } else {
       logger.debug(
