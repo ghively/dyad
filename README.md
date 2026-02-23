@@ -18,6 +18,12 @@ No sign-up required. Just download and go.
 
 ### [👉 Download for your platform](https://www.dyad.sh/#download)
 
+## 🐳 Deployment
+
+You can deploy Dyad on a server using Docker. This allows you to host, run, and control your applications from a remote environment.
+
+See [DEPLOY.md](DEPLOY.md) for instructions.
+
 ## 🤝 Community
 
 Join our growing community of AI app builders on **Reddit**: [r/dyadbuilders](https://www.reddit.com/r/dyadbuilders/) - share your projects and get help from the community!

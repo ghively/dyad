@@ -1,0 +1,15 @@
+services:
+  dyad:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      # Data directory for database persistence
+      - ./data:/app/data
+      # Apps directory where projects will be stored
+      - ./apps:/app/apps
+    environment:
+      - DYAD_DATA_DIR=/app/data
+      - DYAD_APPS_DIR=/app/apps
+      - NODE_ENV=production
+    restart: unless-stopped

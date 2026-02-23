@@ -6,6 +6,9 @@ import { IS_TEST_BUILD } from "../ipc/utils/test_utils";
  * Gets the base dyad-apps directory path (without a specific app subdirectory)
  */
 export function getDyadAppsBaseDirectory(): string {
+  if (process.env.DYAD_APPS_DIR) {
+    return process.env.DYAD_APPS_DIR;
+  }
   if (IS_TEST_BUILD) {
     const electron = getElectron();
     if (electron) {
@@ -40,6 +43,9 @@ export function getTypeScriptCachePath(): string {
  */
 
 export function getUserDataPath(): string {
+  if (process.env.DYAD_DATA_DIR) {
+    return process.env.DYAD_DATA_DIR;
+  }
   const electron = getElectron();
 
   // When running in Electron and app is ready
